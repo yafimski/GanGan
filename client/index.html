@@ -5,7 +5,7 @@
 </head>
 <body>
 <header class="app-header clay">
-<h1>מארגן גן</h1>
+<h1>מאר-גן</h1>
 <button id="notesBtn" class="btn ghost icon-only" aria-label="פתקיות" title="פתקיות">📝</button>
 </header>
 
@@ -14,7 +14,7 @@
 <!-- Top area: Need to bring to kindergarten -->
 <section class="board clay" data-list="to-garden" aria-label="צריך להביא לגן">
 <div class="board-title">
-<h2></h2>
+<h2>לקחת לגן</h2>
 </div>
 </div>
 <div class="items" id="to-garden"></div>
@@ -22,9 +22,9 @@
 
 
 <!-- Bottom area: Need to take home -->
-<section class="board clay" data-list="to-home" aria-label="צריך לקחת הביתה">
+<section class="board clay" id="to-home-board" data-list="to-home" aria-label="צריך לקחת הביתה">
 <div class="board-title">
-<h2></h2>
+<h2>להחזיר הביתה</h2>
 </div>
 </div>
 <div class="items" id="to-home"></div>
@@ -37,16 +37,16 @@
 <div class="notes-panel">
 <header class="panel-bar">
 <button class="btn ghost close" value="cancel" aria-label="סגור">✖</button>
-<h3>פתקיות</h3>
+<h3>משימות</h3>
 <span class="spacer"></span>
 </header>
+<footer class="panel-footer">
+  <input id="noteInput" type="text" placeholder="הוספת פתק חדש…" />
+  <button id="addNoteBtn" class="btn">➕ הוסף</button>
+</footer>
 <section class="panel-body">
 <div class="notes-list" id="notesList"></div>
 </section>
-<footer class="panel-footer">
-<input id="noteInput" type="text" placeholder="הוספת פתק חדש…" />
-<button id="addNoteBtn" class="btn">➕ הוסף</button>
-</footer>
 </div>
 </dialog>
 

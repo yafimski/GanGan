@@ -1,0 +1,69 @@
+<!doctype html>
+<meta name="description" content="סידור פריטים בין צריך להביא לגן / צריך לקחת הביתה" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80'>🍼</text></svg>">
+</head>
+<body>
+<header class="app-header clay">
+<h1>מארגן גן</h1>
+<button id="notesBtn" class="btn ghost icon-only" aria-label="פתקיות" title="פתקיות">📝</button>
+</header>
+
+
+<main id="app">
+<!-- Top area: Need to bring to kindergarten -->
+<section class="board clay" data-list="to-garden" aria-label="צריך להביא לגן">
+<div class="board-title">
+<h2></h2>
+</div>
+</div>
+<div class="items" id="to-garden"></div>
+</section>
+
+
+<!-- Bottom area: Need to take home -->
+<section class="board clay" data-list="to-home" aria-label="צריך לקחת הביתה">
+<div class="board-title">
+<h2></h2>
+</div>
+</div>
+<div class="items" id="to-home"></div>
+</section>
+</main>
+
+
+<!-- Notes modal -->
+<dialog id="notesModal" class="panel clay">
+<div class="notes-panel">
+<header class="panel-bar">
+<button class="btn ghost close" value="cancel" aria-label="סגור">✖</button>
+<h3>פתקיות</h3>
+<span class="spacer"></span>
+</header>
+<section class="panel-body">
+<div class="notes-list" id="notesList"></div>
+</section>
+<footer class="panel-footer">
+<input id="noteInput" type="text" placeholder="הוספת פתק חדש…" />
+<button id="addNoteBtn" class="btn">➕ הוסף</button>
+</footer>
+</div>
+</dialog>
+
+
+<template id="itemTemplate">
+  <div class="item clay">
+    <div class="item-top">
+      <button class="qty btn ghost">x1</button>
+      <div class="icon"></div>
+      <button class="swap btn ghost">⇄</button>
+    </div>
+    <div class="label"></div>
+  </div>
+</template>
+
+
+
+<script src="app.js" type="module"></script>
+</body>
+</html>

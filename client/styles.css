@@ -1,0 +1,227 @@
+/* === Gan Organizer — clean CSS (RTL, mobile-first, claymorphism) === */
+
+:root {
+  --bg-1: #eef2ff; /* baby blue */
+  --bg-2: #f5f3ff; /* lavender */
+  --card: #ffffff; /* white */
+  --text: #2e2e2e;
+  --muted: #667085;
+  --chip: #eef6ff; /* soft blue chip */
+  --btn: #f8fafc; /* neutral button bg */
+  --shadow-rgb: 18, 22, 48; /* for rgba() */
+}
+
+/* Reset bits */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: system-ui, "Segoe UI", Arial, Helvetica, "Noto Sans Hebrew", sans-serif;
+  background: linear-gradient(145deg, var(--bg-1), var(--bg-2));
+  padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+}
+
+/* Clay utility — subtle, elegant */
+.clay {
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: 6px 6px 14px rgba(var(--shadow-rgb), 0.1), -5px -5px 12px rgba(255, 255, 255, 0.7),
+    inset 1px 1px 3px rgba(var(--shadow-rgb), 0.04), inset -1px -1px 3px rgba(255, 255, 255, 0.55);
+}
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+/* Layout — ALWAYS vertical (top/bottom) */
+#app {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  height: calc(100dvh - 88px);
+}
+.board {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.board-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.board-title h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 14px;
+  overflow: auto;
+  padding: 6px;
+}
+
+/* Item card */
+.item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 12px;
+  min-height: 140px;
+  min-width: 120px;
+  text-align: center;
+}
+
+.item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+}
+
+.icon {
+  font-size: 2rem;
+  line-height: 1;
+  margin: 0 auto;
+}
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+/* Buttons */
+.btn {
+  border: 0;
+  border-radius: 16px;
+  padding: 6px 10px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--btn);
+  box-shadow: inset 1px 1px 2px rgba(var(--shadow-rgb), 0.06), inset -1px -1px 2px rgba(255, 255, 255, 0.85);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn.ghost {
+  background: var(--btn);
+}
+.btn.icon-only {
+  font-size: 1.25rem;
+  padding: 10px 12px;
+}
+.btn.small {
+  padding: 4px 8px;
+  font-size: 0.9rem;
+}
+.qty {
+  font-size: 0.9rem;
+  padding: 4px 6px;
+}
+.swap {
+  font-size: 1rem;
+  padding: 4px 6px;
+}
+/* Notes panel — fullscreen, white */
+#notesModal {
+  width: 100dvw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  padding: 0;
+  background: #fff;
+}
+#notesModal::backdrop {
+  background: rgba(0, 0, 0, 0.24);
+}
+.notes-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: #fff;
+}
+.panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+}
+.panel-bar h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.panel-bar .close {
+  font-size: 1.1rem;
+}
+.panel-bar .spacer {
+  flex: 1;
+}
+.panel-body {
+  padding: 10px 12px;
+  overflow: auto;
+}
+.panel-footer {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+.panel-footer input {
+  flex: 1;
+  border: 0;
+  border-radius: 16px;
+  padding: 10px 12px;
+  background: #fff;
+  box-shadow: inset 1px 1px 2px rgba(var(--shadow-rgb), 0.06), inset -1px -1px 2px rgba(255, 255, 255, 0.9);
+}
+
+/* Ticket (note) */
+.ticket {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  background: #fff7ed;
+  box-shadow: 4px 4px 10px rgba(var(--shadow-rgb), 0.08), inset 1px 1px 2px rgba(255, 255, 255, 0.75);
+}
+.ticket input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font-size: 1.05rem;
+}
+.ticket .del {
+  background: #ffe4e6;
+}
+
+/* (Removed side-by-side desktop rule to keep vertical layout everywhere) */

@@ -7,8 +7,8 @@ app.use(express.json());
 
 // Default state (all items start in "to-garden")
 const DEFAULT_ITEMS = [
-  "milk-frozen",
   "onesie-long",
+  "milk-frozen",
   "onesie-short",
   "pants-long",
   "pants-short",
@@ -20,7 +20,9 @@ const DEFAULT_ITEMS = [
   "pacifier",
   "socks",
   "food-box",
-  "diaper-cream"
+  "diaper-cream",
+  "coat",
+  "hat"
 ];
 
 let itemsState = {

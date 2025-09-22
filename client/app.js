@@ -3,20 +3,22 @@ const API_BASE =
 
 // Hebrew items list with emoji icons
 const ITEMS = [
-  { id: "milk-frozen", icon: "❄️🍼", label: "חלב אם קפוא" },
-  { id: "onesie-long", icon: "👕", label: "אוברול ארוך" },
-  { id: "onesie-short", icon: "👕", label: "אוברול קצר" },
+  { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא" },
+  { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך" },
+  { id: "onesie-short", icon: "👕", label: "ג'דיי קצר" },
   { id: "pants-long", icon: "👖", label: "מכנסיים ארוכים" },
   { id: "pants-short", icon: "🩳", label: "מכנסיים קצרים" },
   { id: "apron", icon: "🧑‍🍳", label: "סינר" },
   { id: "bedsheet", icon: "🛏️", label: "סדין" },
   { id: "blanket", icon: "🧣", label: "שמיכה" },
   { id: "wipes", icon: "🧻", label: "מגבונים" },
-  { id: "diapers", icon: "🧷", label: "חיתולים" },
-  { id: "pacifier", icon: "🧸", label: "מוצץ" },
+  { id: "diapers", icon: "🩲", label: "חיתולים" },
+  { id: "pacifier", icon: "🪷", label: "מוצץ" },
   { id: "socks", icon: "🧦", label: "גרביים" },
-  { id: "food-box", icon: "🥡", label: "קופסת אוכל לתינוק" },
-  { id: "diaper-cream", icon: "🧴", label: "קרם חיתולים" }
+  { id: "food-box", icon: "🫙", label: "מחלק תמל" },
+  { id: "diaper-cream", icon: "🧴", label: "קרם חיתולים" },
+  { id: "coat", icon: "🧥", label: "מעיל" },
+  { id: "hat", icon: "🧢", label: "כובע" }
 ];
 
 // --- State ---
@@ -138,8 +140,8 @@ function renderNotes() {
       saveNotes();
     });
     const del = document.createElement("button");
-    del.className = "btn del";
-    del.textContent = "מחק";
+    del.className = "remove del";
+    del.textContent = "X";
     del.addEventListener("click", () => {
       notes = notes.filter((x) => x.id !== n.id);
       renderNotes();

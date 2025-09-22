@@ -17,7 +17,8 @@
 }
 html,
 body {
-  height: 100%;
+  font-size: 16px;
+  line-height: 1.5;
 }
 body {
   margin: 0;
@@ -76,36 +77,36 @@ body {
 }
 .items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
   overflow: auto;
   padding: 6px;
 }
 
 /* Item card */
 .item {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 14px 12px;
+  padding: 16px;
   min-height: 140px;
-  min-width: 120px;
-  text-align: center;
+  font-size: 1rem;
 }
 
 .item-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  width: 100%;
+  gap: 10px;
 }
 
 .icon {
-  font-size: 2rem;
-  line-height: 1;
-  margin: 0 auto;
+  font-size: 2.5rem;
 }
+
+.qty,
+.swap {
+  font-size: 1rem;
+  padding: 8px 12px;
+}
+
 .controls {
   display: flex;
   gap: 8px;
@@ -114,9 +115,7 @@ body {
 }
 
 .label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-top: 8px;
+  font-size: 1rem;
 }
 /* Buttons */
 .btn {
@@ -142,33 +141,27 @@ body {
   padding: 4px 8px;
   font-size: 0.9rem;
 }
-.qty {
-  font-size: 0.9rem;
-  padding: 4px 6px;
-}
-.swap {
-  font-size: 1rem;
-  padding: 4px 6px;
-}
 /* Notes panel — fullscreen, white */
 #notesModal {
-  width: 100dvw;
-  height: 100dvh;
+  width: 100vw;
+  height: 100vh;
   max-width: none;
   max-height: none;
-  border: 0;
+  margin: 0;
   padding: 0;
-  background: #fff;
+  border: none;
 }
+
 #notesModal::backdrop {
   background: rgba(0, 0, 0, 0.24);
 }
 .notes-panel {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  background: #fff;
 }
+
+
 .panel-bar {
   display: flex;
   align-items: center;
@@ -186,8 +179,8 @@ body {
   flex: 1;
 }
 .panel-body {
-  padding: 10px 12px;
-  overflow: auto;
+  flex: 1;
+  overflow-y: auto;
 }
 .panel-footer {
   display: flex;
@@ -225,3 +218,8 @@ body {
 }
 
 /* (Removed side-by-side desktop rule to keep vertical layout everywhere) */
+@media (max-width: 480px) {
+  .items {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,5 +1,6 @@
-// const API_BASE = "https://your-app.onrender.com/api";
-const API_BASE = "http://localhost:5000/api";
+// Switch automatically between local dev and Render
+const API_BASE =
+  location.hostname === "localhost" ? "http://localhost:5000/api" : "https://gan-organizer-server.onrender.com"; // replace with your Render URL
 
 // Hebrew items list with emoji icons
 const ITEMS = [
@@ -110,7 +111,11 @@ function cycleQty(id) {
 }
 
 // --- Notes ---
-notesBtn.addEventListener("click", () => modal.showModal());
+notesBtn.addEventListener("click", () => {
+  modal.showModal();
+  modal.style.height = window.innerHeight + "px"; // force full height
+});
+
 modal.querySelector(".close").addEventListener("click", () => modal.close());
 addNoteBtn.addEventListener("click", (e) => {
   e.preventDefault();

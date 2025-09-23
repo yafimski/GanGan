@@ -25,39 +25,50 @@ const ITEMS = [
 let state = { "to-garden": [], "to-home": [] };
 let notes = [];
 
-// --- API helpers ---
+// --- Items API ---
 async function loadItems() {
   const res = await fetch(`${API_BASE}/items`);
-  const data = await res.json();
-  if (!data["to-garden"] || !data["to-home"] || data["to-garden"].length === 0) {
-    return { "to-garden": ITEMS.map(({ id }) => ({ id, qty: 1 })), "to-home": [] };
-  }
-  return data;
+  state = await res.json();
+  render();
 }
 
-async function saveItems() {
+async function saveItem(id, qty, side) {
   await fetch(`${API_BASE}/items`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(state)
+    body: JSON.stringify({ id, qty, side })
   });
 }
 
+// --- Notes API ---
 async function loadNotes() {
   const res = await fetch(`${API_BASE}/notes`);
-  return await res.json();
+  notes = await res.json();
+  renderNotes();
 }
-async function saveNotes() {
+
+async function addNote(note) {
   await fetch(`${API_BASE}/notes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(notes)
+    body: JSON.stringify(note)
   });
 }
 
-// --- DOM helpers ---
-const $ = (sel) => document.querySelector(sel);
+async function updateNote(note) {
+  await fetch(`${API_BASE}/notes/${note.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(note)
+  });
+}
 
+async function deleteNote(id) {
+  await fetch(`${API_BASE}/notes/${id}`, { method: "DELETE" });
+}
+
+// --- DOM ---
+const $ = (s) => document.querySelector(s);
 const toGarden = $("#to-garden");
 const toHome = $("#to-home");
 const notesBtn = $("#notesBtn");
@@ -85,47 +96,36 @@ function render() {
       node.querySelector(".label").textContent = meta.label;
       node.querySelector(".qty").textContent = `x${qty}`;
 
-      node.querySelector(".qty").onclick = () => cycleQty(id);
-      node.querySelector(".swap").onclick = () => moveItem(id);
+      node.querySelector(".qty").onclick = async () => {
+        const newQty = qty >= 4 ? 1 : qty + 1;
+        await saveItem(id, newQty, side);
+        await loadItems();
+      };
+
+      node.querySelector(".swap").onclick = async () => {
+        const newSide = side === "to-garden" ? "to-home" : "to-garden";
+        await saveItem(id, qty, newSide);
+        await loadItems();
+      };
 
       container.appendChild(node);
     }
   }
-  saveItems();
 }
 
-function moveItem(id) {
-  const from = state["to-garden"].some((x) => x.id === id) ? "to-garden" : "to-home";
-  const to = from === "to-garden" ? "to-home" : "to-garden";
-  const idx = state[from].findIndex((x) => x.id === id);
-  if (idx === -1) return;
-  const [item] = state[from].splice(idx, 1);
-  state[to].unshift(item);
-  render();
-}
-
-function cycleQty(id) {
-  const side = state["to-garden"].some((x) => x.id === id) ? "to-garden" : "to-home";
-  const item = state[side].find((x) => x.id === id);
-  item.qty = item.qty >= 4 ? 1 : item.qty + 1;
-  render();
-}
-
-// --- Notes ---
-notesBtn.addEventListener("click", () => {
-  modal.showModal();
-  modal.style.height = window.innerHeight + "px";
-});
-
+// --- Notes DOM ---
+notesBtn.addEventListener("click", () => modal.showModal());
 modal.querySelector(".close").addEventListener("click", () => modal.close());
-addNoteBtn.addEventListener("click", (e) => {
+
+addNoteBtn.addEventListener("click", async (e) => {
   e.preventDefault();
   const text = noteInput.value.trim();
   if (!text) return;
-  notes.unshift({ id: crypto.randomUUID(), text });
+  const newNote = { id: crypto.randomUUID(), text };
+  await addNote(newNote);
+  notes.unshift(newNote);
   noteInput.value = "";
   renderNotes();
-  saveNotes();
 });
 
 function renderNotes() {
@@ -133,20 +133,23 @@ function renderNotes() {
   for (const n of notes) {
     const row = document.createElement("div");
     row.className = "ticket clay";
+
     const input = document.createElement("input");
     input.value = n.text;
-    input.addEventListener("input", () => {
+    input.addEventListener("input", async () => {
       n.text = input.value;
-      saveNotes();
+      await updateNote(n);
     });
+
     const del = document.createElement("button");
-    del.className = "remove del";
-    del.textContent = "X";
-    del.addEventListener("click", () => {
+    del.className = "btn del";
+    del.textContent = "מחק";
+    del.addEventListener("click", async () => {
+      await deleteNote(n.id);
       notes = notes.filter((x) => x.id !== n.id);
       renderNotes();
-      saveNotes();
     });
+
     row.append(input, del);
     notesList.appendChild(row);
   }
@@ -154,8 +157,6 @@ function renderNotes() {
 
 // --- Boot ---
 (async function init() {
-  state = await loadItems();
-  notes = await loadNotes();
-  render();
-  renderNotes();
+  await loadItems();
+  await loadNotes();
 })();

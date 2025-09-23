@@ -1,14 +1,20 @@
 import express from "express";
 import cors from "cors";
+import { MongoClient } from "mongodb";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Default state (all items start in "to-garden")
+const uri = process.env.MONGO_URI; // put in Render env vars
+const client = new MongoClient(uri);
+
+let db, itemsCol, notesCol;
+
+// Default items for first-time setup
 const DEFAULT_ITEMS = [
-  "onesie-long",
   "milk-frozen",
+  "onesie-long",
   "onesie-short",
   "pants-long",
   "pants-short",
@@ -20,38 +26,64 @@ const DEFAULT_ITEMS = [
   "pacifier",
   "socks",
   "food-box",
-  "diaper-cream",
-  "coat",
-  "hat"
+  "diaper-cream"
 ];
 
-let itemsState = {
-  "to-garden": DEFAULT_ITEMS.map((id) => ({ id, qty: 1 })),
-  "to-home": []
-};
-let notesState = [];
+async function initDB() {
+  await client.connect();
+  db = client.db("BabyOrganizer");
+  itemsCol = db.collection("items");
+  notesCol = db.collection("notes");
 
-// === Routes ===
-app.get("/api/items", (req, res) => {
-  res.json(itemsState);
+  // Seed items if empty
+  const count = await itemsCol.countDocuments();
+  if (count === 0) {
+    const toGarden = DEFAULT_ITEMS.map((id) => ({ id, qty: 1 }));
+    await itemsCol.insertMany(toGarden.map((item) => ({ ...item, side: "to-garden" })));
+  }
+}
+
+// === Items ===
+app.get("/api/items", async (req, res) => {
+  const docs = await itemsCol.find().toArray();
+  const toGarden = docs.filter((d) => d.side === "to-garden");
+  const toHome = docs.filter((d) => d.side === "to-home");
+  res.json({ "to-garden": toGarden, "to-home": toHome });
 });
 
-app.post("/api/items", (req, res) => {
-  itemsState = req.body;
+app.post("/api/items", async (req, res) => {
+  const { id, qty, side } = req.body;
+  await itemsCol.updateOne({ id }, { $set: { qty, side } }, { upsert: true });
   res.json({ ok: true });
 });
 
-app.get("/api/notes", (req, res) => {
-  res.json(notesState);
+// === Notes ===
+app.get("/api/notes", async (req, res) => {
+  const docs = await notesCol.find().toArray();
+  res.json(docs);
 });
 
-app.post("/api/notes", (req, res) => {
-  notesState = req.body;
+app.post("/api/notes", async (req, res) => {
+  const note = req.body; // { id, text }
+  await notesCol.insertOne(note);
+  res.json(note);
+});
+
+app.put("/api/notes/:id", async (req, res) => {
+  const { id } = req.params;
+  const note = req.body;
+  await notesCol.updateOne({ id }, { $set: note });
   res.json({ ok: true });
 });
 
-// === Start server ===
+app.delete("/api/notes/:id", async (req, res) => {
+  const { id } = req.params;
+  await notesCol.deleteOne({ id });
+  res.json({ ok: true });
+});
+
+// === Start ===
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+initDB().then(() => {
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 });

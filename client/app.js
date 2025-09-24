@@ -1,7 +1,9 @@
-const API_BASE =
-  location.hostname === "localhost" ? "http://localhost:5000/api" : "https://gan-organizer-server.onrender.com/api";
+const API_BASE = ["localhost", "127.0.0.1"].includes(location.hostname)
+  ? "http://localhost:5000/api"
+  : "https://gan-organizer-server.onrender.com/api";
+// const API_BASE =
+//   location.hostname === "localhost" ? "http://localhost:3000/api" : "https://gan-organizer-server.onrender.com/api";
 
-// Hebrew items list with emoji icons
 const ITEMS = [
   { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא" },
   { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך" },
@@ -18,11 +20,12 @@ const ITEMS = [
   { id: "food-box", icon: "🫙", label: "מחלק תמל" },
   { id: "diaper-cream", icon: "🧴", label: "קרם חיתולים" },
   { id: "coat", icon: "🧥", label: "מעיל" },
-  { id: "hat", icon: "🧢", label: "כובע" }
+  { id: "hat", icon: "🧢", label: "כובע" },
+  { id: "water-bottle", icon: "🥤", label: "בקבוק מים" }
 ];
 
 // --- State ---
-let state = { "to-garden": [], "to-home": [] };
+let state = [];
 let notes = [];
 
 // --- Items API ---
@@ -32,11 +35,11 @@ async function loadItems() {
   render();
 }
 
-async function saveItem(id, qty, side) {
+async function saveItem(id, qty, status) {
   await fetch(`${API_BASE}/items`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id, qty, side })
+    body: JSON.stringify({ id, qty, status })
   });
 }
 
@@ -55,22 +58,9 @@ async function addNote(note) {
   });
 }
 
-async function updateNote(note) {
-  await fetch(`${API_BASE}/notes/${note.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(note)
-  });
-}
-
-async function deleteNote(id) {
-  await fetch(`${API_BASE}/notes/${id}`, { method: "DELETE" });
-}
-
 // --- DOM ---
 const $ = (s) => document.querySelector(s);
-const toGarden = $("#to-garden");
-const toHome = $("#to-home");
+const itemsContainer = $("#items");
 const notesBtn = $("#notesBtn");
 const modal = $("#notesModal");
 const notesList = $("#notesList");
@@ -83,33 +73,38 @@ function getItemMeta(id) {
 }
 
 function render() {
-  toGarden.innerHTML = "";
-  toHome.innerHTML = "";
+  const container = document.querySelector("#items"); // a single items grid
+  container.innerHTML = "";
 
-  for (const side of ["to-garden", "to-home"]) {
-    const container = side === "to-garden" ? toGarden : toHome;
-    for (const { id, qty } of state[side]) {
-      const node = tpl.content.firstElementChild.cloneNode(true);
-      const meta = getItemMeta(id);
-      node.dataset.id = id;
-      node.querySelector(".icon").textContent = meta.icon;
-      node.querySelector(".label").textContent = meta.label;
-      node.querySelector(".qty").textContent = `x${qty}`;
+  for (const { id, qty, status } of state) {
+    const node = tpl.content.firstElementChild.cloneNode(true);
+    const meta = getItemMeta(id);
+    node.dataset.id = id;
+    node.querySelector(".icon").textContent = meta?.icon ?? "❓";
+    node.querySelector(".label").textContent = meta?.label ?? id;
+    node.querySelector(".qty").textContent = `x${qty}`;
 
-      node.querySelector(".qty").onclick = async () => {
-        const newQty = qty >= 4 ? 1 : qty + 1;
-        await saveItem(id, newQty, side);
-        await loadItems();
-      };
+    // cycle qty
+    node.querySelector(".qty").onclick = async () => {
+      const newQty = qty >= 4 ? 1 : qty + 1;
+      await saveItem(id, newQty, status);
+      await loadItems();
+    };
 
-      node.querySelector(".swap").onclick = async () => {
-        const newSide = side === "to-garden" ? "to-home" : "to-garden";
-        await saveItem(id, qty, newSide);
-        await loadItems();
-      };
+    // in render():
+    if (status === "take") node.style.background = "yellow";
+    if (status === "return") node.style.background = "lawngreen";
+    if (status === "none") node.style.background = "white";
 
-      container.appendChild(node);
-    }
+    // NEW: cycle status button
+    const cycleBtn = node.querySelector(".cycle");
+    cycleBtn.onclick = async () => {
+      const next = status === "none" ? "take" : status === "take" ? "return" : "none";
+
+      await saveItem(id, qty, next);
+      await loadItems();
+    };
+    container.appendChild(node);
   }
 }
 
@@ -143,7 +138,7 @@ function renderNotes() {
 
     const del = document.createElement("button");
     del.className = "btn del";
-    del.textContent = "מחק";
+    del.textContent = "❌";
     del.addEventListener("click", async () => {
       await deleteNote(n.id);
       notes = notes.filter((x) => x.id !== n.id);

@@ -26,7 +26,10 @@ const DEFAULT_ITEMS = [
   "pacifier",
   "socks",
   "food-box",
-  "diaper-cream"
+  "diaper-cream",
+  "water-bottle",
+  "coat",
+  "hat"
 ];
 
 async function initDB() {
@@ -38,22 +41,26 @@ async function initDB() {
   // Seed items if empty
   const count = await itemsCol.countDocuments();
   if (count === 0) {
-    const toGarden = DEFAULT_ITEMS.map((id) => ({ id, qty: 1 }));
-    await itemsCol.insertMany(toGarden.map((item) => ({ ...item, side: "to-garden" })));
+    const docs = DEFAULT_ITEMS.map((id) => ({
+      id,
+      qty: 1,
+      status: "none" // default state
+    }));
+    await itemsCol.insertMany(docs);
   }
 }
 
 // === Items ===
 app.get("/api/items", async (req, res) => {
   const docs = await itemsCol.find().toArray();
-  const toGarden = docs.filter((d) => d.side === "to-garden");
-  const toHome = docs.filter((d) => d.side === "to-home");
-  res.json({ "to-garden": toGarden, "to-home": toHome });
+  res.json(docs); // flat array
 });
 
 app.post("/api/items", async (req, res) => {
-  const { id, qty, side } = req.body;
-  await itemsCol.updateOne({ id }, { $set: { qty, side } }, { upsert: true });
+  const { id, qty, status } = req.body;
+  if (!id) return res.status(400).json({ error: "Missing id" });
+
+  await itemsCol.updateOne({ id }, { $set: { qty, status: status || "none" } }, { upsert: true });
   res.json({ ok: true });
 });
 

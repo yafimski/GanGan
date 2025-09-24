@@ -6,7 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.MONGO_URI; // put in Render env vars
+// const uri = process.env.MONGO_URI; // put in Render env vars
+const uri = "mongodb+srv://yafim:ganganGAN000@organizer.oqpuijc.mongodb.net/";
 const client = new MongoClient(uri);
 
 let db, itemsCol, notesCol;
@@ -85,7 +86,9 @@ app.put("/api/notes/:id", async (req, res) => {
 
 app.delete("/api/notes/:id", async (req, res) => {
   const { id } = req.params;
-  await notesCol.deleteOne({ id });
+  console.log("Deleting note with id:", id); // 👈 check this
+  const result = await notesCol.deleteOne({ id });
+  console.log("Delete result:", result);
   res.json({ ok: true });
 });
 

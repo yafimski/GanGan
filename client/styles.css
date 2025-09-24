@@ -43,6 +43,7 @@ body {
   margin-bottom: 2rem;
   background-color: white;
   grid-row: 1;
+  border-radius: none;
 }
 .app-header h1 {
   margin: 0;
@@ -71,13 +72,6 @@ body {
   padding: 1rem;
 }
 
-.board-title {
-  display: flex;
-  font-size: 1.5rem;
-  justify-content: flex-end;
-  padding-right: 2rem;
-}
-
 .items {
   flex: 1;
   display: grid;
@@ -85,6 +79,7 @@ body {
   padding: 1rem;
   grid-template-columns: repeat(2, 1fr);
   overflow-y: auto;
+  margin-bottom: 7rem;
 }
 
 .item {
@@ -115,13 +110,6 @@ body {
   background-color: transparent;
 }
 
-.controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-}
-
 .label {
   font-size: 2rem;
   text-align: center;
@@ -134,26 +122,12 @@ body {
   cursor: pointer;
   background-color: white;
 }
-.btn:active {
-  transform: translateY(1px);
-}
+
 .btn.icon-only {
   font-size: 1.25rem;
   padding: 10px 12px;
 }
-.btn.small {
-  padding: 4px 8px;
-  font-size: 0.9rem;
-}
 
-.remove {
-  border: 0;
-  font-size: 2rem;
-  border-radius: 1rem;
-  font-weight: 600;
-  padding: 1rem;
-  background-color: white;
-}
 .qty,
 .cycle {
   font-size: 4rem;
@@ -226,6 +200,7 @@ body {
   font-size: 2rem;
   padding: 8px;
   margin: 12px;
+  margin-bottom: 1rem;
   border-radius: 16px;
 }
 .ticket input {
@@ -287,6 +262,7 @@ footer.legend {
   justify-content: center;
   gap: 2rem;
 }
+
 /* (Removed side-by-side desktop rule to keep vertical layout everywhere) */
 @media (max-width: 480px) {
   .items {

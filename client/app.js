@@ -58,6 +58,12 @@ async function addNote(note) {
   });
 }
 
+async function deleteNote(id) {
+  await fetch(`${API_BASE}/notes/${id}`, {
+    method: "DELETE"
+  });
+}
+
 // --- DOM ---
 const $ = (s) => document.querySelector(s);
 const itemsContainer = $("#items");
@@ -140,8 +146,8 @@ function renderNotes() {
     del.className = "btn del";
     del.textContent = "❌";
     del.addEventListener("click", async () => {
-      await deleteNote(n.id);
       notes = notes.filter((x) => x.id !== n.id);
+      await deleteNote(n.id);
       renderNotes();
     });
 

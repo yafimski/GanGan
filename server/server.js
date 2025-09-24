@@ -6,8 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const uri = process.env.MONGO_URI; // put in Render env vars
-const uri = "mongodb+srv://yafim:ganganGAN000@organizer.oqpuijc.mongodb.net/";
+const uri = process.env.MONGO_URI; // put in Render env vars
 const client = new MongoClient(uri);
 
 let db, itemsCol, notesCol;

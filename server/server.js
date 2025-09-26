@@ -14,6 +14,7 @@ let db, itemsCol, notesCol;
 // Default items for first-time setup
 const DEFAULT_ITEMS = [
   "milk-frozen",
+  "milk-bottle",
   "onesie-long",
   "onesie-short",
   "pants-long",

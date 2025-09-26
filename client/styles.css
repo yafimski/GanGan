@@ -15,7 +15,7 @@ body {
   height: 100dvh; /* full viewport height */
   display: grid;
   grid-template-rows: 10% 85% 5%;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 body {
   margin: 0;

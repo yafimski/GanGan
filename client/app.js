@@ -6,6 +6,7 @@ const API_BASE = ["localhost", "127.0.0.1"].includes(location.hostname)
 
 const ITEMS = [
   { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא" },
+  { id: "milk-bottle", icon: "🍼", label: "בקבוק לחלב" },
   { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך" },
   { id: "onesie-short", icon: "👕", label: "ג'דיי קצר" },
   { id: "pants-long", icon: "👖", label: "מכנסיים ארוכים" },

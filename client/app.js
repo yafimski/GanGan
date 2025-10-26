@@ -5,24 +5,24 @@ const API_BASE = ["localhost", "127.0.0.1"].includes(location.hostname)
 //   location.hostname === "localhost" ? "http://localhost:3000/api" : "https://gan-organizer-server.onrender.com/api";
 
 const ITEMS = [
-  { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא", count: null },
-  { id: "milk-bottle", icon: "🍼", label: "בקבוק לחלב", count: 1 },
-  { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך", count: null },
-  { id: "onesie-short", icon: "👕", label: "ג'דיי קצר", count: null },
-  { id: "pants-long", icon: "👖", label: "מכנסיים ארוכים", count: null },
-  { id: "pants-short", icon: "🩳", label: "מכנסיים קצרים", count: null },
-  { id: "apron", icon: "🧑‍🍳", label: "סינר", count: null },
+  { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא", count: 1 },
+  { id: "milk-bottle", icon: "🍼", label: "בקבוק לחלב", count: null },
+  { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך", count: 1 },
+  { id: "onesie-short", icon: "👕", label: "ג'דיי קצר", count: 1 },
+  { id: "pants-long", icon: "👖", label: "מכנסיים ארוכים", count: 1 },
+  { id: "pants-short", icon: "🩳", label: "מכנסיים קצרים", count: 1 },
+  { id: "apron", icon: "🧑‍🍳", label: "סינר", count: 1 },
   { id: "bedsheet", icon: "🛏️", label: "סדין", count: null },
   { id: "blanket", icon: "🧣", label: "שמיכה", count: null },
   { id: "wipes", icon: "🧻", label: "מגבונים", count: 1 },
   { id: "diapers", icon: "🩲", label: "חיתולים", count: 1 },
   { id: "pacifier", icon: "🪷", label: "מוצץ", count: null },
-  { id: "socks", icon: "🧦", label: "גרביים", count: null },
-  { id: "food-box", icon: "🫙", label: "מחלק תמל", count: 1 },
+  { id: "socks", icon: "🧦", label: "גרביים", count: 1 },
+  // { id: "food-box", icon: "🫙", label: "מחלק תמל", count: null },
   { id: "diaper-cream", icon: "🧴", label: "קרם חיתולים", count: null },
-  { id: "coat", icon: "🧥", label: "מעיל", count: null },
-  { id: "hat", icon: "🧢", label: "כובע", count: null },
-  { id: "water-bottle", icon: "🥤", label: "בקבוק מים", count: 1 }
+  { id: "coat", icon: "🧥", label: "מעיל", count: 1 },
+  { id: "hat", icon: "🧢", label: "כובע", count: 1 },
+  { id: "water-bottle", icon: "🥤", label: "בקבוק מים", count: null }
 ];
 
 // --- State ---

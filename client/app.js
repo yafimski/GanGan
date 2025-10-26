@@ -5,24 +5,24 @@ const API_BASE = ["localhost", "127.0.0.1"].includes(location.hostname)
 //   location.hostname === "localhost" ? "http://localhost:3000/api" : "https://gan-organizer-server.onrender.com/api";
 
 const ITEMS = [
-  { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא" },
-  { id: "milk-bottle", icon: "🍼", label: "בקבוק לחלב" },
-  { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך" },
-  { id: "onesie-short", icon: "👕", label: "ג'דיי קצר" },
-  { id: "pants-long", icon: "👖", label: "מכנסיים ארוכים" },
-  { id: "pants-short", icon: "🩳", label: "מכנסיים קצרים" },
-  { id: "apron", icon: "🧑‍🍳", label: "סינר" },
-  { id: "bedsheet", icon: "🛏️", label: "סדין" },
-  { id: "blanket", icon: "🧣", label: "שמיכה" },
-  { id: "wipes", icon: "🧻", label: "מגבונים" },
-  { id: "diapers", icon: "🩲", label: "חיתולים" },
-  { id: "pacifier", icon: "🪷", label: "מוצץ" },
-  { id: "socks", icon: "🧦", label: "גרביים" },
-  { id: "food-box", icon: "🫙", label: "מחלק תמל" },
-  { id: "diaper-cream", icon: "🧴", label: "קרם חיתולים" },
-  { id: "coat", icon: "🧥", label: "מעיל" },
-  { id: "hat", icon: "🧢", label: "כובע" },
-  { id: "water-bottle", icon: "🥤", label: "בקבוק מים" }
+  { id: "milk-frozen", icon: "❄️", label: "חלב אם קפוא", count: null },
+  { id: "milk-bottle", icon: "🍼", label: "בקבוק לחלב", count: 1 },
+  { id: "onesie-long", icon: "👕", label: "ג'דיי ארוך", count: null },
+  { id: "onesie-short", icon: "👕", label: "ג'דיי קצר", count: null },
+  { id: "pants-long", icon: "👖", label: "מכנסיים ארוכים", count: null },
+  { id: "pants-short", icon: "🩳", label: "מכנסיים קצרים", count: null },
+  { id: "apron", icon: "🧑‍🍳", label: "סינר", count: null },
+  { id: "bedsheet", icon: "🛏️", label: "סדין", count: null },
+  { id: "blanket", icon: "🧣", label: "שמיכה", count: null },
+  { id: "wipes", icon: "🧻", label: "מגבונים", count: 1 },
+  { id: "diapers", icon: "🩲", label: "חיתולים", count: 1 },
+  { id: "pacifier", icon: "🪷", label: "מוצץ", count: null },
+  { id: "socks", icon: "🧦", label: "גרביים", count: null },
+  { id: "food-box", icon: "🫙", label: "מחלק תמל", count: 1 },
+  { id: "diaper-cream", icon: "🧴", label: "קרם חיתולים", count: null },
+  { id: "coat", icon: "🧥", label: "מעיל", count: null },
+  { id: "hat", icon: "🧢", label: "כובע", count: null },
+  { id: "water-bottle", icon: "🥤", label: "בקבוק מים", count: 1 }
 ];
 
 // --- State ---
@@ -59,6 +59,14 @@ async function addNote(note) {
   });
 }
 
+async function updateNote(note) {
+  await fetch(`${API_BASE}/notes/${note.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(note)
+  });
+}
+
 async function deleteNote(id) {
   await fetch(`${API_BASE}/notes/${id}`, {
     method: "DELETE"
@@ -71,6 +79,8 @@ const itemsContainer = $("#items");
 const notesBtn = $("#notesBtn");
 const modal = $("#notesModal");
 const notesList = $("#notesList");
+const notesEmpty = $("#notesEmpty");
+const notesCount = $("#notesCount");
 const noteInput = $("#noteInput");
 const addNoteBtn = $("#addNoteBtn");
 const tpl = $("#itemTemplate");
@@ -80,43 +90,56 @@ function getItemMeta(id) {
 }
 
 function render() {
-  const container = document.querySelector("#items"); // a single items grid
-  container.innerHTML = "";
+  itemsContainer.innerHTML = "";
 
   for (const { id, qty, status } of state) {
     const node = tpl.content.firstElementChild.cloneNode(true);
     const meta = getItemMeta(id);
     node.dataset.id = id;
+    node.dataset.status = status;
+
     node.querySelector(".icon").textContent = meta?.icon ?? "❓";
     node.querySelector(".label").textContent = meta?.label ?? id;
-    node.querySelector(".qty").textContent = `x${qty}`;
 
-    // cycle qty
-    node.querySelector(".qty").onclick = async () => {
+    const qtyBtn = node.querySelector(".qty");
+    if (meta?.count == null) {
+      qtyBtn.classList.add("hidden");
+    } else {
+      qtyBtn.textContent = `x${qty}`;
+      qtyBtn.classList.remove("hidden");
+    }
+
+    // click to increment qty (wrap 1..4)
+    qtyBtn.onclick = async () => {
+      if (meta?.count == null) return;
       const newQty = qty >= 4 ? 1 : qty + 1;
       await saveItem(id, newQty, status);
       await loadItems();
     };
 
-    // in render():
-    if (status === "take") node.style.background = "yellow";
-    if (status === "return") node.style.background = "lawngreen";
-    if (status === "none") node.style.background = "white";
-
-    // NEW: cycle status button
-    const cycleBtn = node.querySelector(".cycle");
-    cycleBtn.onclick = async () => {
-      const next = status === "none" ? "take" : status === "take" ? "return" : "none";
-
-      await saveItem(id, qty, next);
-      await loadItems();
-    };
-    container.appendChild(node);
+    // vertical status buttons
+    const statusBtns = node.querySelectorAll(".status-column .st");
+    statusBtns.forEach((btn) => {
+      const s = btn.dataset.status;
+      const isActive = s === status;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-pressed", isActive);
+      btn.disabled = isActive;
+      btn.onclick = async () => {
+        if (s === status) return;
+        await saveItem(id, qty, s);
+        await loadItems();
+      };
+    });
+    itemsContainer.appendChild(node);
   }
 }
 
 // --- Notes DOM ---
-notesBtn.addEventListener("click", () => modal.showModal());
+notesBtn.addEventListener("click", () => {
+  modal.showModal();
+  setTimeout(() => noteInput?.focus(), 0);
+});
 modal.querySelector(".close").addEventListener("click", () => modal.close());
 
 addNoteBtn.addEventListener("click", async (e) => {
@@ -128,32 +151,66 @@ addNoteBtn.addEventListener("click", async (e) => {
   notes.unshift(newNote);
   noteInput.value = "";
   renderNotes();
+  const firstNote = notesList.querySelector(".note-text");
+  if (firstNote) {
+    firstNote.focus();
+    firstNote.selectionStart = firstNote.value.length;
+  }
+});
+
+noteInput.addEventListener("keydown", async (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addNoteBtn.click();
+  }
 });
 
 function renderNotes() {
   notesList.innerHTML = "";
-  for (const n of notes) {
-    const row = document.createElement("div");
-    row.className = "ticket clay";
 
-    const input = document.createElement("input");
-    input.value = n.text;
-    input.addEventListener("input", async () => {
-      n.text = input.value;
-      await updateNote(n);
+  if (notesCount) notesCount.textContent = notes.length;
+  notesEmpty.hidden = notes.length !== 0;
+
+  for (const n of notes) {
+    const card = document.createElement("article");
+    card.className = "note-card clay";
+
+    const textArea = document.createElement("textarea");
+    textArea.className = "note-text";
+    textArea.value = n.text;
+    textArea.placeholder = "רשמו כאן…";
+    textArea.rows = 1;
+
+    const autoResize = () => {
+      textArea.style.height = "auto";
+      textArea.style.height = `${textArea.scrollHeight}px`;
+    };
+    requestAnimationFrame(autoResize);
+
+    let debounce;
+    textArea.addEventListener("input", () => {
+      n.text = textArea.value;
+      autoResize();
+      clearTimeout(debounce);
+      debounce = setTimeout(() => updateNote(n), 400);
     });
 
+    const actions = document.createElement("div");
+    actions.className = "note-actions";
+
     const del = document.createElement("button");
-    del.className = "btn del";
-    del.textContent = "❌";
+    del.className = "btn icon danger";
+    del.setAttribute("aria-label", "מחיקת פתק");
+    del.textContent = "✖";
     del.addEventListener("click", async () => {
       notes = notes.filter((x) => x.id !== n.id);
       await deleteNote(n.id);
       renderNotes();
     });
 
-    row.append(input, del);
-    notesList.appendChild(row);
+    actions.appendChild(del);
+    card.append(textArea, actions);
+    notesList.appendChild(card);
   }
 }
 

@@ -8,7 +8,7 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80'>🍼</text></svg>"
     />
   </head>
-  <body>
+  <body class="select-none">
     <header class="app-header clay">
       <h1>מאר-גן</h1>
       <button id="notesBtn" class="btn ghost icon-only" aria-label="פתקיות" title="פתקיות">📝</button>
@@ -31,30 +31,36 @@
     <dialog id="notesModal" class="panel clay">
       <div class="notes-panel">
         <header class="panel-bar">
-          <div class="header-flex">
-            <button class="btn ghost close" value="cancel" aria-label="סגור">✖</button>
+          <button class="btn ghost close" value="cancel" aria-label="סגירת חלון">✖</button>
+          <div class="panel-title">
             <h3>פתקיות</h3>
           </div>
-          <span class="spacer"></span>
         </header>
-        <footer class="panel-footer">
-          <input id="noteInput" type="text" placeholder="הוספת פתק חדש…" />
-          <button id="addNoteBtn" class="btn">➕ הוסף</button>
-        </footer>
         <section class="panel-body">
+          <div class="notes-empty" id="notesEmpty" hidden>אין פתקיות עדיין — הוסיפו פתק ראשון!</div>
           <div class="notes-list" id="notesList"></div>
         </section>
+        <footer class="panel-footer">
+          <input id="noteInput" type="text" placeholder="הוספת פתק חדש…" />
+          <button id="addNoteBtn" class="btn primary">הוסף</button>
+        </footer>
       </div>
     </dialog>
 
     <template id="itemTemplate">
       <div class="item clay">
-        <div class="item-top">
-          <button class="cycle btn">⟳</button>
-          <span class="icon">🍼</span>
-          <button class="qty btn">x1</button>
+        <div class="status-column" role="group" aria-label="סטטוס פריט">
+          <button class="st" data-status="none" aria-label="ללא"></button>
+          <button class="st" data-status="take" aria-label="לקיחה"></button>
+          <button class="st" data-status="return" aria-label="החזרה"></button>
         </div>
-        <div class="label">פריט</div>
+        <div class="item-content">
+          <div class="item-top">
+            <span class="icon">🍼</span>
+            <button class="qty btn">x1</button>
+          </div>
+          <div class="label">פריט</div>
+        </div>
       </div>
     </template>
 
